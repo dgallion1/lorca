@@ -62,6 +62,7 @@ func newChromeWithArgs(chromeBinary string, args ...string) (*chrome, error) {
 		return nil, err
 	}
 	if err := c.cmd.Start(); err != nil {
+		c.kill()
 		return nil, err
 	}
 
