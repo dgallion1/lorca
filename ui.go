@@ -79,11 +79,14 @@ func New(url, dir string, width, height int, customArgs ...string) (UI, error) {
 	args = append(args, "--remote-debugging-port=0")
 
 	chrome, err := newChromeWithArgs(ChromeExecutable(), args...)
-	done := make(chan struct{})
 	if err != nil {
+		if chrome != nil{
+			chrome.kill()
+		}
 		return nil, err
 	}
 
+	done := make(chan struct{})
 	go func() {
 		chrome.cmd.Wait()
 		close(done)
