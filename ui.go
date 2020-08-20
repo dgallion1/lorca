@@ -80,9 +80,6 @@ func New(url, dir string, width, height int, customArgs ...string) (UI, error) {
 
 	chrome, err := newChromeWithArgs(ChromeExecutable(), args...)
 	if err != nil {
-		if chrome != nil{
-			chrome.kill()
-		}
 		return nil, err
 	}
 

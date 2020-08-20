@@ -62,7 +62,6 @@ func newChromeWithArgs(chromeBinary string, args ...string) (*chrome, error) {
 		return nil, err
 	}
 	if err := c.cmd.Start(); err != nil {
-		c.kill()
 		return nil, err
 	}
 
@@ -271,7 +270,7 @@ func (c *chrome) readLoop() {
 			json.Unmarshal([]byte(params.Message), &res)
 
 			if res.ID == 0 && res.Method == "Runtime.consoleAPICalled" || res.Method == "Runtime.exceptionThrown" {
-				log.Println(params.Message)
+				//log.Println(params.Message)
 			} else if res.ID == 0 && res.Method == "Runtime.bindingCalled" {
 				payload := struct {
 					Name string            `json:"name"`
