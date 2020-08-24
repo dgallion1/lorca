@@ -61,6 +61,11 @@ var defaultChromeArgs = []string{
 // ui.Close(). You might want to use "--headless" custom CLI argument to test
 // your UI code.
 func New(url, dir string, width, height int, customArgs ...string) (UI, error) {
+	_, err := os.Stat(dir+"/lockfile")
+	if err == nil{
+		return nil, fmt.Errorf("Chrome is running")
+	}
+
 	if url == "" {
 		url = "data:text/html,<html></html>"
 	}
@@ -80,6 +85,7 @@ func New(url, dir string, width, height int, customArgs ...string) (UI, error) {
 
 	chrome, err := newChromeWithArgs(ChromeExecutable(), args...)
 	if err != nil {
+		fmt.Printf("ERROR1 chrome(%v)\n", chrome)
 		return nil, err
 	}
 

@@ -58,9 +58,12 @@ func newChromeWithArgs(chromeBinary string, args ...string) (*chrome, error) {
 	c.cmd = exec.Command(chromeBinary, args...)
 	pipe, err := c.cmd.StderrPipe()
 	if err != nil {
+		fmt.Printf("ERROR2\n")
+
 		return nil, err
 	}
 	if err := c.cmd.Start(); err != nil {
+		fmt.Printf("ERROR3\n")
 		return nil, err
 	}
 
@@ -68,6 +71,7 @@ func newChromeWithArgs(chromeBinary string, args ...string) (*chrome, error) {
 	re := regexp.MustCompile(`^DevTools listening on (ws://.*?)\r?\n$`)
 	m, err := readUntilMatch(pipe, re)
 	if err != nil {
+		fmt.Printf("ERROR4\n")
 		c.kill()
 		return nil, err
 	}
@@ -76,6 +80,8 @@ func newChromeWithArgs(chromeBinary string, args ...string) (*chrome, error) {
 	// Open a websocket
 	c.ws, err = websocket.Dial(wsURL, "", "http://127.0.0.1")
 	if err != nil {
+		fmt.Printf("ERROR5\n")
+
 		c.kill()
 		return nil, err
 	}
@@ -83,12 +89,15 @@ func newChromeWithArgs(chromeBinary string, args ...string) (*chrome, error) {
 	// Find target and initialize session
 	c.target, err = c.findTarget()
 	if err != nil {
+		fmt.Printf("ERROR6\n")
+
 		c.kill()
 		return nil, err
 	}
 
 	c.session, err = c.startSession(c.target)
 	if err != nil {
+		fmt.Printf("ERROR7\n")
 		c.kill()
 		return nil, err
 	}
@@ -103,6 +112,8 @@ func newChromeWithArgs(chromeBinary string, args ...string) (*chrome, error) {
 		"Log.enable":           nil,
 	} {
 		if _, err := c.send(method, args); err != nil {
+			fmt.Printf("ERROR8\n")
+
 			c.kill()
 			c.cmd.Wait()
 			return nil, err
@@ -112,6 +123,7 @@ func newChromeWithArgs(chromeBinary string, args ...string) (*chrome, error) {
 	if !contains(args, "--headless") {
 		win, err := c.getWindowForTarget(c.target)
 		if err != nil {
+			fmt.Printf("ERROR9\n")
 			c.kill()
 			return nil, err
 		}
@@ -518,7 +530,9 @@ func (c *chrome) kill() error {
 func readUntilMatch(r io.ReadCloser, re *regexp.Regexp) ([]string, error) {
 	br := bufio.NewReader(r)
 	for {
-		if line, err := br.ReadString('\n'); err != nil {
+		line, err := br.ReadString('\n');
+		//fmt.Printf("L:: %s\n", line)
+		if err != nil {
 			r.Close()
 			return nil, err
 		} else if m := re.FindStringSubmatch(line); m != nil {
