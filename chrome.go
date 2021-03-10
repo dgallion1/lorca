@@ -109,7 +109,7 @@ func newChromeWithArgs(chromeBinary string, args ...string) (*chrome, error) {
 		"Runtime.enable":       nil,
 		"Security.enable":      nil,
 		"Performance.enable":   nil,
-		"Log.enable":           nil,
+		"Log.disable":          nil,
 	} {
 		if _, err := c.send(method, args); err != nil {
 			fmt.Printf("ERROR8\n")
@@ -530,7 +530,7 @@ func (c *chrome) kill() error {
 func readUntilMatch(r io.ReadCloser, re *regexp.Regexp) ([]string, error) {
 	br := bufio.NewReader(r)
 	for {
-		line, err := br.ReadString('\n');
+		line, err := br.ReadString('\n')
 		//fmt.Printf("L:: %s\n", line)
 		if err != nil {
 			r.Close()
