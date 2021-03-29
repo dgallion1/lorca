@@ -105,7 +105,7 @@ func newChromeWithArgs(chromeBinary string, args ...string) (*chrome, error) {
 	for method, args := range map[string]h{
 		"Page.enable":          nil,
 		"Target.setAutoAttach": {"autoAttach": true, "waitForDebuggerOnStart": false},
-		"Network.enable":       nil,
+		"Network.disable":       nil,
 		"Runtime.enable":       nil,
 		"Security.enable":      nil,
 		"Performance.enable":   nil,
